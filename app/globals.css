@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  @apply antialiased text-accent bg-white overflow-x-hidden;
+  height: 100%;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+  z-index: -1;
+  background: radial-gradient(ellipse 80% 50% at 20% 40%, rgba(226, 0, 116, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(226, 0, 116, 0.03) 0%, transparent 50%);
+  animation: bgDrift 25s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes bgDrift {
+  0% { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+
+/* Präsentations-Modus: horizontaler Scroll, ein Slide pro Viewport */
+.presentation-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.presentation-slide {
+  width: 100vw;
+  min-width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  padding-top: 4rem; /* Platz für fixen Header (h-16), damit nichts überdeckt wird */
+}
+
+/* Einheitliches Container-Styling: Standard = Rahmen, Hover = Magenta gefüllt */
+.presentation-card {
+  border-color: #e5e7eb;
+  background-color: transparent;
+}
+.presentation-card:hover {
+  border-color: #E20074;
+  background-color: #E20074;
+  color: white;
+}
+.presentation-card:hover .text-mute,
+.presentation-card:hover [class*="text-mute"] {
+  color: white !important;
+}
+.presentation-card:hover [class*="opacity-90"] {
+  color: white;
+}
