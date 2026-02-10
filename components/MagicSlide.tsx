@@ -2,10 +2,12 @@
 
 import { useRef, useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { usePresentationProgress } from "@/lib/PresentationProgressContext";
 
 const COUNTDOWN_START_MINUTES = 45;
 const COUNTDOWN_START_MS = COUNTDOWN_START_MINUTES * 60 * 1000;
 const PLAYBACK_RATE = 5;
+const MAGIC_SLIDE_INDEX = 4; // Folie 5 = "magic"
 
 function formatTime(ms: number): string {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -16,6 +18,7 @@ function formatTime(ms: number): string {
 
 export default function MagicSlide() {
   const { t } = useLanguage();
+  const { currentIndex } = usePresentationProgress();
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [remainingMs, setRemainingMs] = useState(COUNTDOWN_START_MS);
@@ -23,6 +26,7 @@ export default function MagicSlide() {
   const [realDurationSec, setRealDurationSec] = useState<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
+  const isOnMagicSlide = currentIndex === MAGIC_SLIDE_INDEX;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -58,30 +62,19 @@ export default function MagicSlide() {
     };
   }, []);
 
+  // Video starten, sobald Folie 5 (magic) sichtbar ist – zuverlässig per currentIndex statt IntersectionObserver (horizontaler Scroll)
   useEffect(() => {
-    const section = sectionRef.current;
     const video = videoRef.current;
-    if (!section || !video) return;
-
-    const tryPlay = () => {
-      videoRef.current?.play().catch(() => {});
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0]?.isIntersecting) return;
-        tryPlay();
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(section);
-    video.addEventListener("canplay", tryPlay);
-    tryPlay();
-    return () => {
-      observer.disconnect();
-      video.removeEventListener("canplay", tryPlay);
-    };
-  }, []);
+    if (!video) return;
+    if (!isOnMagicSlide) {
+      video.pause();
+      return;
+    }
+    const play = () => video.play().catch(() => {});
+    if (video.readyState >= 2) play();
+    else video.addEventListener("canplay", play, { once: true });
+    return () => video.removeEventListener("canplay", play);
+  }, [isOnMagicSlide]);
 
   useEffect(() => {
     if (!isRunning || realDurationSec === null || realDurationSec <= 0) return;

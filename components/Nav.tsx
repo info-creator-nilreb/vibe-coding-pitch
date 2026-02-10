@@ -9,19 +9,19 @@ export default function Nav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-border"
+      className="fixed top-0 left-0 right-0 z-50 overflow-visible bg-white/90 backdrop-blur-sm border-b border-border"
       role="navigation"
       aria-label="Fortschritt und Sprache"
     >
-      <div className="mx-auto max-w-[72rem] px-6">
-        <div className="flex h-16 items-center justify-end gap-4">
-          <div className="h-1.5 w-24 rounded-full bg-border overflow-hidden" aria-hidden>
+      <div className="mx-auto w-full max-w-[72rem] px-4 sm:px-6">
+        <div className="flex h-14 sm:h-16 items-center justify-end gap-3 sm:gap-4 min-w-0 flex-shrink-0">
+          <div className="h-1.5 w-16 sm:w-24 flex-shrink-0 rounded-full bg-border overflow-hidden" aria-hidden>
             <div
               className="h-full bg-magenta rounded-full transition-all duration-300"
               style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
             />
           </div>
-          <div className="flex items-center gap-1 text-sm text-mute" role="group" aria-label="Sprache">
+          <div className="flex items-center gap-1 text-sm text-mute flex-shrink-0" role="group" aria-label="Sprache">
             <button
               type="button"
               onClick={() => setLocale("de")}
