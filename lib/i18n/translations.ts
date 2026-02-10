@@ -197,7 +197,7 @@ const de = {
     caption1: "Prompt in Cursor.",
     caption2: "Die Oberfläche entsteht.",
     caption3: "Deployment und Ergebnis.",
-    promptLabel: "Beispiel-Prompt",
+    promptLabel: "System-Prompt",
     initialPrompt: INITIAL_PROMPT,
     promptExample:
       "Erstelle eine minimalistische Landing-Page mit Hero, drei Feature-Karten und Footer. Tailwind, dunkler Hintergrund.",
@@ -298,7 +298,7 @@ const hu = {
     caption1: "Prompt a Cursorban.",
     caption2: "Az felület megjelenik.",
     caption3: "Deploy és eredmény.",
-    promptLabel: "Prompt Vibe Coding prezentáció",
+    promptLabel: "Rendszer prompt",
     initialPrompt: INITIAL_PROMPT,
     promptExample:
       "Készíts egy minimalista landing page-et Hero blokkal, három feature kártyával és lábléccel. Tailwind, sötét háttér.",
