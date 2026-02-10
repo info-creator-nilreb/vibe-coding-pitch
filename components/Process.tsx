@@ -58,10 +58,10 @@ export default function Process() {
           {steps.map((label, i) => (
             <div key={i} className="flex items-center gap-3 sm:gap-6">
               <div
-                className="presentation-card px-5 py-4 border-2 rounded-xl text-accent font-medium text-center min-w-[8rem] opacity-0 animate-process-step transition-colors duration-200 flex items-center gap-3"
+                className="presentation-card group px-5 py-4 border-2 rounded-xl text-accent font-medium text-center min-w-[8rem] opacity-0 animate-process-step transition-colors duration-200 flex items-center gap-3"
                 style={{ animationDelay: `${i * 0.5}s`, animationFillMode: "forwards" }}
               >
-                <span className="shrink-0 w-8 h-8 flex items-center justify-center text-magenta">
+                <span className="shrink-0 w-8 h-8 flex items-center justify-center text-magenta group-hover:text-white">
                   {STEP_ICONS[i]("w-6 h-6")}
                 </span>
                 <span>{label}</span>
