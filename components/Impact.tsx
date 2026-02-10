@@ -33,8 +33,7 @@ export default function Impact() {
   const allItems = [...bullets, ...metrics];
 
   const cardBase = "rounded-xl border-2 min-h-[88px] flex items-center justify-center p-4 sm:p-6 w-full transition-colors duration-200";
-  const bulletCard = `${cardBase} presentation-card`;
-  const metricCard = `${cardBase} border-border bg-card/50`;
+  const cardClass = `${cardBase} presentation-card`;
 
   return (
     <section
@@ -57,7 +56,6 @@ export default function Impact() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full max-w-3xl mx-auto">
           {allItems.map((text, i) => {
             const isLeft = i % 2 === 0;
-            const isMetric = i >= 4;
             const delay = i * STAGGER_MS;
             const animateClass = inView
               ? isLeft
@@ -67,7 +65,7 @@ export default function Impact() {
             return (
               <div
                 key={i}
-                className={`${isMetric ? metricCard : bulletCard} ${animateClass}`}
+                className={`${cardClass} ${animateClass}`}
                 style={
                   inView
                     ? { animationDelay: `${delay}ms`, animationFillMode: "forwards" as const }

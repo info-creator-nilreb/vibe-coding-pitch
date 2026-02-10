@@ -9,7 +9,7 @@ export default function Nav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 overflow-visible bg-white/90 backdrop-blur-sm border-b border-border"
+      className="fixed top-0 left-0 right-0 z-50 overflow-visible cursor-auto bg-white/90 backdrop-blur-sm border-b border-border"
       role="navigation"
       aria-label="Fortschritt und Sprache"
     >
