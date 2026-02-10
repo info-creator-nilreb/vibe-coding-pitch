@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { usePresentationProgress } from "@/lib/PresentationProgressContext";
 
 type Point = { x: number; y: number };
 
@@ -17,6 +18,9 @@ export default function LaserPointerOverlay() {
   const [lines, setLines] = useState<Point[][]>([]);
   const [currentLine, setCurrentLine] = useState<Point[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const { currentIndex } = usePresentationProgress();
+  const currentLineRef = useRef<Point[]>(currentLine);
+  currentLineRef.current = currentLine;
 
   const updatePointer = useCallback((x: number, y: number, visible: boolean) => {
     const dot = dotRef.current;
@@ -25,8 +29,16 @@ export default function LaserPointerOverlay() {
     dot.style.visibility = visible ? "visible" : "hidden";
   }, []);
 
+  // Beim Wechsel der Seite: Linien und Zeichenzustand zurücksetzen, Dot ausblenden
+  useEffect(() => {
+    setLines([]);
+    setCurrentLine([]);
+    setIsDrawing(false);
+    updatePointer(0, 0, false);
+  }, [currentIndex, updatePointer]);
+
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       updatePointer(e.clientX, e.clientY, true);
       if (isDrawing) {
         setCurrentLine((prev) => [...prev, { x: e.clientX, y: e.clientY }]);
@@ -35,16 +47,16 @@ export default function LaserPointerOverlay() {
     [isDrawing, updatePointer]
   );
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: MouseEvent) => {
     if (e.button !== 0) return;
     setCurrentLine([{ x: e.clientX, y: e.clientY }]);
     setIsDrawing(true);
   }, []);
 
   const handleMouseUp = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       if (e.button !== 0) return;
-      const pts = [...currentLine, { x: e.clientX, y: e.clientY }];
+      const pts = [...currentLineRef.current, { x: e.clientX, y: e.clientY }];
       const totalLen =
         pts.length < 2 ? 0 : pts.slice(1).reduce((acc, p, i) => acc + distance(pts[i], p), 0);
 
@@ -52,9 +64,7 @@ export default function LaserPointerOverlay() {
         setLines((prev) => [...prev, pts]);
       } else if (overlayRef.current && pts.length <= 2) {
         const el = overlayRef.current;
-        el.style.pointerEvents = "none";
         const target = document.elementFromPoint(e.clientX, e.clientY);
-        el.style.pointerEvents = "auto";
         if (target && target !== el) {
           (target as HTMLElement).click();
         }
@@ -63,27 +73,38 @@ export default function LaserPointerOverlay() {
       setCurrentLine([]);
       setIsDrawing(false);
     },
-    [currentLine]
+    []
   );
 
   const handleMouseLeave = useCallback(() => {
     updatePointer(0, 0, false);
     if (isDrawing) {
-      if (currentLine.length >= 2) setLines((prev) => [...prev, currentLine]);
+      const cl = currentLineRef.current;
+      if (cl.length >= 2) setLines((prev) => [...prev, cl]);
       setCurrentLine([]);
       setIsDrawing(false);
     }
-  }, [isDrawing, currentLine, updatePointer]);
+  }, [isDrawing, updatePointer]);
+
+  // Events auf document, damit Hover/Klicks auf darunterliegende Elemente weiter funktionieren
+  useEffect(() => {
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [handleMouseMove, handleMouseDown, handleMouseUp, handleMouseLeave]);
 
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[45] cursor-none pointer-events-auto"
+      className="fixed inset-0 z-[45] cursor-none pointer-events-none"
       style={{ top: "4rem" }}
-      onMouseMove={handleMouseMove}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
       aria-hidden
     >
       {/* Gezogene Linien */}
