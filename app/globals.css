@@ -53,7 +53,12 @@ body::before {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   overflow: hidden;
-  padding-top: 4rem; /* Platz für fixen Header (h-16), damit nichts überdeckt wird */
+  padding-top: 3.5rem; /* Mobil: Platz für Header (h-14) */
+}
+@media (min-width: 640px) {
+  .presentation-slide {
+    padding-top: 4rem; /* Desktop: Platz für Header (h-16) */
+  }
 }
 
 /* Einheitliches Container-Styling: Standard = Rahmen, Hover = Magenta gefüllt */

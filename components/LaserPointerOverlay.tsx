@@ -115,6 +115,77 @@ export default function LaserPointerOverlay() {
     }
   }, [isDrawing, updatePointer]);
 
+  const touchStartRef = useRef<Point | null>(null);
+  const lastTouchRef = useRef<Point>({ x: 0, y: 0 });
+
+  const handleTouchStart = useCallback(
+    (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const x = t.clientX;
+      const y = t.clientY;
+      touchStartRef.current = { x, y };
+      lastTouchRef.current = { x, y };
+      updatePointer(x, y, true);
+      setCurrentLine([{ x, y }]);
+      setIsDrawing(false);
+    },
+    [updatePointer]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const x = t.clientX;
+      const y = t.clientY;
+      lastTouchRef.current = { x, y };
+      updatePointer(x, y, true);
+      const start = touchStartRef.current;
+      if (start && !isDrawing) {
+        if (distance(start, { x, y }) >= MIN_DRAG_PX) {
+          setIsDrawing(true);
+          setCurrentLine((prev) => [...prev, { x, y }]);
+          e.preventDefault();
+        }
+      }
+      if (isDrawing) {
+        e.preventDefault();
+        setCurrentLine((prev) => [...prev, { x, y }]);
+      }
+    },
+    [isDrawing, updatePointer]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      if (e.changedTouches.length !== 1) return;
+      const t = e.changedTouches[0];
+      const x = t.clientX;
+      const y = t.clientY;
+      const pts = [...currentLineRef.current, { x, y }];
+      const totalLen =
+        pts.length < 2 ? 0 : pts.slice(1).reduce((acc, p, i) => acc + distance(pts[i], p), 0);
+
+      if (totalLen >= MIN_DRAG_PX && pts.length >= 2) {
+        setLines((prev) => [...prev, pts]);
+      } else if (overlayRef.current && pts.length <= 2) {
+        const el = overlayRef.current;
+        const target = document.elementFromPoint(x, y);
+        if (target && target !== el) {
+          (target as HTMLElement).click();
+        }
+      }
+
+      setCurrentLine([]);
+      setIsDrawing(false);
+      document.body.style.userSelect = "";
+      touchStartRef.current = null;
+      updatePointer(0, 0, false);
+    },
+    [updatePointer]
+  );
+
   // Events auf document, damit Hover/Klicks auf darunterliegende Elemente weiter funktionieren
   useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);
@@ -129,11 +200,22 @@ export default function LaserPointerOverlay() {
     };
   }, [handleMouseMove, handleMouseDown, handleMouseUp, handleMouseLeave]);
 
+  // Touch: Pointer-Punkt + Zeichnen mobil (Scroll erst ab MIN_DRAG_PX als Zeichnen gewertet)
+  useEffect(() => {
+    document.addEventListener("touchstart", handleTouchStart, { passive: true });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd, { passive: true });
+    return () => {
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
+
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[45] cursor-none pointer-events-none"
-      style={{ top: "4rem" }}
+      className="fixed inset-0 z-[45] cursor-none pointer-events-none top-14 sm:top-16"
       aria-hidden
     >
       {/* Gezogene Linien */}
