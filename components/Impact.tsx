@@ -32,7 +32,7 @@ export default function Impact() {
   const metrics = [t.impact.metric1, t.impact.metric2];
   const allItems = [...bullets, ...metrics];
 
-  const cardBase = "rounded-xl border-2 min-h-[88px] flex items-center justify-center p-4 sm:p-6 w-full transition-colors duration-200 cursor-default";
+  const cardBase = "rounded-xl border-2 min-h-[88px] flex items-center justify-center p-4 sm:p-6 w-full transition-colors duration-200";
   const bulletCard = `${cardBase} presentation-card`;
   const metricCard = `${cardBase} border-border bg-card/50`;
 
