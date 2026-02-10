@@ -95,7 +95,11 @@ export default function LaserPointerOverlay() {
         const el = overlayRef.current;
         const target = document.elementFromPoint(e.clientX, e.clientY);
         if (target && target !== el) {
-          (target as HTMLElement).click();
+          if (typeof (target as HTMLElement).click === "function") {
+            (target as HTMLElement).click();
+          } else {
+            target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+          }
         }
       }
 
@@ -196,7 +200,11 @@ export default function LaserPointerOverlay() {
         if (pts.length <= 2 && overlayRef.current) {
           const target = document.elementFromPoint(x, y);
           if (target && target !== overlayRef.current) {
-            (target as HTMLElement).click();
+            if (typeof (target as HTMLElement).click === "function") {
+              (target as HTMLElement).click();
+            } else {
+              target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+            }
           }
         }
       }
