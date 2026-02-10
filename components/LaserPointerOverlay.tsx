@@ -22,6 +22,12 @@ export default function LaserPointerOverlay() {
   const currentLineRef = useRef<Point[]>(currentLine);
   currentLineRef.current = currentLine;
 
+  // Mauszeiger ausblenden (Overlay ist pointer-events-none, daher über body)
+  useEffect(() => {
+    document.body.classList.add("cursor-none");
+    return () => document.body.classList.remove("cursor-none");
+  }, []);
+
   const updatePointer = useCallback((x: number, y: number, visible: boolean) => {
     const dot = dotRef.current;
     if (!dot) return;
@@ -29,13 +35,33 @@ export default function LaserPointerOverlay() {
     dot.style.visibility = visible ? "visible" : "hidden";
   }, []);
 
-  // Beim Wechsel der Seite: Linien und Zeichenzustand zurücksetzen, Dot ausblenden
-  useEffect(() => {
+  const clearStrokes = useCallback(() => {
     setLines([]);
     setCurrentLine([]);
     setIsDrawing(false);
+    document.body.style.userSelect = "";
     updatePointer(0, 0, false);
-  }, [currentIndex, updatePointer]);
+  }, [updatePointer]);
+
+  // Beim Wechsel der Seite: alle Striche und Zeichenzustand zurücksetzen
+  const prevIndexRef = useRef(currentIndex);
+  useEffect(() => {
+    if (prevIndexRef.current !== currentIndex) {
+      prevIndexRef.current = currentIndex;
+      clearStrokes();
+    }
+  }, [currentIndex, clearStrokes]);
+
+  // ESC: Striche auf der aktuellen Seite löschen
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        clearStrokes();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [clearStrokes]);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -51,6 +77,7 @@ export default function LaserPointerOverlay() {
     if (e.button !== 0) return;
     setCurrentLine([{ x: e.clientX, y: e.clientY }]);
     setIsDrawing(true);
+    document.body.style.userSelect = "none";
   }, []);
 
   const handleMouseUp = useCallback(
@@ -72,11 +99,13 @@ export default function LaserPointerOverlay() {
 
       setCurrentLine([]);
       setIsDrawing(false);
+      document.body.style.userSelect = "";
     },
     []
   );
 
   const handleMouseLeave = useCallback(() => {
+    document.body.style.userSelect = "";
     updatePointer(0, 0, false);
     if (isDrawing) {
       const cl = currentLineRef.current;
