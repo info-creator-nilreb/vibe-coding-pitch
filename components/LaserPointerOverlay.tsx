@@ -7,6 +7,8 @@ type Point = { x: number; y: number };
 
 const MIN_DRAG_PX = 8;
 const LASER_COLOR = "#E20074";
+/** Mobil: überwiegend horizontal (|dx| > ratio * |dy|) = Wischen/Seitenwechsel, sonst = Zeichnen */
+const SWIPE_HORIZONTAL_RATIO = 2;
 
 function distance(a: Point, b: Point): number {
   return Math.hypot(b.x - a.x, b.y - a.y);
@@ -117,6 +119,8 @@ export default function LaserPointerOverlay() {
 
   const touchStartRef = useRef<Point | null>(null);
   const lastTouchRef = useRef<Point>({ x: 0, y: 0 });
+  type TouchGesture = "none" | "swipe" | "draw";
+  const touchGestureRef = useRef<TouchGesture>("none");
 
   const handleTouchStart = useCallback(
     (e: TouchEvent) => {
@@ -126,6 +130,7 @@ export default function LaserPointerOverlay() {
       const y = t.clientY;
       touchStartRef.current = { x, y };
       lastTouchRef.current = { x, y };
+      touchGestureRef.current = "none";
       updatePointer(x, y, true);
       setCurrentLine([{ x, y }]);
       setIsDrawing(false);
@@ -142,19 +147,31 @@ export default function LaserPointerOverlay() {
       lastTouchRef.current = { x, y };
       updatePointer(x, y, true);
       const start = touchStartRef.current;
-      if (start && !isDrawing) {
-        if (distance(start, { x, y }) >= MIN_DRAG_PX) {
-          setIsDrawing(true);
-          setCurrentLine((prev) => [...prev, { x, y }]);
-          e.preventDefault();
+      const gesture = touchGestureRef.current;
+      if (start && gesture === "none") {
+        const dx = x - start.x;
+        const dy = y - start.y;
+        const dist = distance(start, { x, y });
+        if (dist >= MIN_DRAG_PX) {
+          const absDx = Math.abs(dx);
+          const absDy = Math.abs(dy);
+          if (absDx > SWIPE_HORIZONTAL_RATIO * absDy) {
+            touchGestureRef.current = "swipe";
+            /* Wischen: kein preventDefault → Container scrollt, Seitenwechsel */
+          } else {
+            touchGestureRef.current = "draw";
+            setIsDrawing(true);
+            setCurrentLine((prev) => [...prev, { x, y }]);
+            e.preventDefault();
+          }
         }
-      }
-      if (isDrawing) {
+      } else if (gesture === "draw") {
         e.preventDefault();
         setCurrentLine((prev) => [...prev, { x, y }]);
       }
+      /* gesture === "swipe": nichts tun, Scroll läuft durch */
     },
-    [isDrawing, updatePointer]
+    [updatePointer]
   );
 
   const handleTouchEnd = useCallback(
@@ -163,24 +180,31 @@ export default function LaserPointerOverlay() {
       const t = e.changedTouches[0];
       const x = t.clientX;
       const y = t.clientY;
-      const pts = [...currentLineRef.current, { x, y }];
-      const totalLen =
-        pts.length < 2 ? 0 : pts.slice(1).reduce((acc, p, i) => acc + distance(pts[i], p), 0);
+      const gesture = touchGestureRef.current;
+      touchGestureRef.current = "none";
+      touchStartRef.current = null;
 
-      if (totalLen >= MIN_DRAG_PX && pts.length >= 2) {
-        setLines((prev) => [...prev, pts]);
-      } else if (overlayRef.current && pts.length <= 2) {
-        const el = overlayRef.current;
-        const target = document.elementFromPoint(x, y);
-        if (target && target !== el) {
-          (target as HTMLElement).click();
+      if (gesture === "draw") {
+        const pts = [...currentLineRef.current, { x, y }];
+        const totalLen =
+          pts.length < 2 ? 0 : pts.slice(1).reduce((acc, p, i) => acc + distance(pts[i], p), 0);
+        if (totalLen >= MIN_DRAG_PX && pts.length >= 2) {
+          setLines((prev) => [...prev, pts]);
+        }
+      } else if (gesture === "none") {
+        const pts = [...currentLineRef.current, { x, y }];
+        if (pts.length <= 2 && overlayRef.current) {
+          const target = document.elementFromPoint(x, y);
+          if (target && target !== overlayRef.current) {
+            (target as HTMLElement).click();
+          }
         }
       }
+      /* gesture === "swipe": nur Pointer ausblenden, kein Klick */
 
       setCurrentLine([]);
       setIsDrawing(false);
       document.body.style.userSelect = "";
-      touchStartRef.current = null;
       updatePointer(0, 0, false);
     },
     [updatePointer]

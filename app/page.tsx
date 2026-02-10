@@ -1,6 +1,7 @@
 import { PresentationProgressProvider } from "@/lib/PresentationProgressContext";
 import Nav from "@/components/Nav";
 import LaserPointerOverlay from "@/components/LaserPointerOverlay";
+import Imprint from "@/components/Imprint";
 import PresentationContainer from "@/components/PresentationContainer";
 import Hero from "@/components/Hero";
 import Problem from "@/components/Problem";
@@ -26,6 +27,7 @@ export default function HomePage() {
         <Contact />
       </PresentationContainer>
       <LaserPointerOverlay />
+      <Imprint />
     </PresentationProgressProvider>
   );
 }
