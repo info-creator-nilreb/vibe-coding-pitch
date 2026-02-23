@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-const SLIDE_IDS = ["start", "problem", "evolution", "demo", "magic", "process", "impact", "contact"];
+const SLIDE_IDS = ["start", "problem", "evolution", "demo", "magic", "process", "impact", "comparison", "contact"];
 const TOTAL = SLIDE_IDS.length;
 
 type ContextValue = {

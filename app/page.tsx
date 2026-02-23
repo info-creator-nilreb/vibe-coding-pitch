@@ -10,6 +10,7 @@ import Demo from "@/components/Demo";
 import MagicSlide from "@/components/MagicSlide";
 import Process from "@/components/Process";
 import Impact from "@/components/Impact";
+import Comparison from "@/components/Comparison";
 import Contact from "@/components/Contact";
 
 export default function HomePage() {
@@ -24,6 +25,7 @@ export default function HomePage() {
         <MagicSlide />
         <Process />
         <Impact />
+        <Comparison />
         <Contact />
       </PresentationContainer>
       <LaserPointerOverlay />

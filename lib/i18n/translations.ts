@@ -155,6 +155,7 @@ const de = {
     demo: "Demo",
     process: "Prozess",
     impact: "Wirkung",
+    comparison: "Vergleich",
     contact: "Kontakt",
   },
   evolution: {
@@ -173,7 +174,7 @@ const de = {
     card3Detail: "KI führt, der Entwickler steuert",
   },
   hero: {
-    headline: "Alles anders mit Vibe Coding?!",
+    headline: "Alles anders mit AI Coding?!",
     subline: "IT-Projekte neu denken",
     ctaDemo: "Demo ansehen",
     ctaProcess: "Prozess erkunden",
@@ -197,7 +198,7 @@ const de = {
     caption1: "Prompt in Cursor.",
     caption2: "Die Oberfläche entsteht.",
     caption3: "Deployment und Ergebnis.",
-    promptLabel: "System-Prompt",
+    promptLabel: "Prompt",
     initialPrompt: INITIAL_PROMPT,
     promptExample:
       "Erstelle eine minimalistische Landing-Page mit Hero, drei Feature-Karten und Footer. Tailwind, dunkler Hintergrund.",
@@ -223,7 +224,30 @@ const de = {
     bullet3: "Weniger Koordinationsaufwand",
     bullet4: "Outcomes statt Spezifikationen",
     metric1: "~40% weniger Vorplanung",
-    metric2: "MVPs in Tagen statt Wochen",
+    metric2: "Spezifikation und Code bleiben synchron",
+  },
+  comparison: {
+    title: "Vibe Coding vs. Spec-Driven Development",
+    intro: "Wann welcher Ansatz?",
+    vibe: {
+      title: "Vibe Coding",
+      sub: "Der kreative Schnellschuss",
+      speed: "Geschwindigkeit & Kreativität",
+      ki: "KI federführend (Prompt-basiert)",
+      prototypes: "Ideal für Prototypen und Experimente",
+      risk: "Höheres Sicherheits- und Qualitätsrisiko",
+    },
+    sdd: {
+      title: "Spec-Driven Development",
+      sub: "Die strukturierte KI-Synergie",
+      structure: "Strukturierte Spezifikation",
+      t2m: "35% schnellere Time-to-Market",
+      cycle: "Intent → Anforderungen → Design → Tasks",
+      cycleShort: "Gezielter Ablauf von Intent bis zu konkreten Tasks",
+      cycleLabel: "4-Phasen-Zyklus",
+      rework: "60% weniger Nacharbeit",
+    },
+    takeaway: "Für marktreife Produkte und Planbarkeit: SDD. Für schnelle Prototypen: Vibe Coding.",
   },
   contact: {
     closing:
@@ -256,6 +280,7 @@ const hu = {
     demo: "Demo",
     process: "Folyamat",
     impact: "Hatás",
+    comparison: "Összehasonlítás",
     contact: "Kapcsolat",
   },
   evolution: {
@@ -274,7 +299,7 @@ const hu = {
     card3Detail: "Az AI vezet, a fejlesztő kormányoz",
   },
   hero: {
-    headline: "Minden más a Vibe Codinggal?!",
+    headline: "Minden más az AI Codinggal?!",
     subline: "IT-projektek újragondolása",
     ctaDemo: "Demó megtekintése",
     ctaProcess: "Folyamat felfedezése",
@@ -298,7 +323,7 @@ const hu = {
     caption1: "Prompt a Cursorban.",
     caption2: "Az felület megjelenik.",
     caption3: "Deploy és eredmény.",
-    promptLabel: "Rendszer prompt",
+    promptLabel: "Prompt",
     initialPrompt: INITIAL_PROMPT,
     promptExample:
       "Készíts egy minimalista landing page-et Hero blokkal, három feature kártyával és lábléccel. Tailwind, sötét háttér.",
@@ -324,7 +349,30 @@ const hu = {
     bullet3: "Kevesebb koordinációs terhet",
     bullet4: "Eredmények specifikációk helyett",
     metric1: "~40%-kal kevesebb előzetes tervezés",
-    metric2: "MVP napokban, nem hetekben",
+    metric2: "A specifikáció és a kód szinkronban marad",
+  },
+  comparison: {
+    title: "Vibe Coding vs. Spec-Driven Development",
+    intro: "Mikor melyik megközelítés?",
+    vibe: {
+      title: "Vibe Coding",
+      sub: "A kreatív gyorslövés",
+      speed: "Sebesség és kreativitás",
+      ki: "Az AI vezet (prompt-alapú)",
+      prototypes: "Ideális prototípusokhoz és kísérletekhez",
+      risk: "Magasabb biztonsági és minőségi kockázat",
+    },
+    sdd: {
+      title: "Spec-Driven Development",
+      sub: "A strukturált AI-szinergia",
+      structure: "Strukturált specifikáció",
+      t2m: "35%-kal gyorsabb time-to-market",
+      cycle: "Szándék → Követelmények → Design → Feladatok",
+      cycleShort: "Célzott folyamat a szándéktól a konkrét feladatokig",
+      cycleLabel: "4 fázisú ciklus",
+      rework: "60%-kal kevesebb utómunkálat",
+    },
+    takeaway: "Piacérett termékekhez és tervezhetőséghez: SDD. Gyors prototípusokhoz: Vibe Coding.",
   },
   contact: {
     closing:

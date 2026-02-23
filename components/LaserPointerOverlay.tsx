@@ -7,6 +7,7 @@ type Point = { x: number; y: number };
 
 const MIN_DRAG_PX = 8;
 const LASER_COLOR = "#E20074";
+const GLOW_AUTO_HIDE_MS = 1000;
 /** Mobil: überwiegend horizontal (|dx| > ratio * |dy|) = Wischen/Seitenwechsel, sonst = Zeichnen */
 const SWIPE_HORIZONTAL_RATIO = 2;
 
@@ -23,6 +24,7 @@ export default function LaserPointerOverlay() {
   const { currentIndex } = usePresentationProgress();
   const currentLineRef = useRef<Point[]>(currentLine);
   currentLineRef.current = currentLine;
+  const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Mauszeiger ausblenden (Overlay ist pointer-events-none, daher über body)
   useEffect(() => {
@@ -38,12 +40,27 @@ export default function LaserPointerOverlay() {
   }, []);
 
   const clearStrokes = useCallback(() => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
     setLines([]);
     setCurrentLine([]);
     setIsDrawing(false);
     document.body.style.userSelect = "";
     updatePointer(0, 0, false);
   }, [updatePointer]);
+
+  const clearStrokesRef = useRef(clearStrokes);
+  clearStrokesRef.current = clearStrokes;
+
+  const scheduleGlowHide = useCallback(() => {
+    if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+    hideTimeoutRef.current = setTimeout(() => {
+      hideTimeoutRef.current = null;
+      clearStrokesRef.current();
+    }, GLOW_AUTO_HIDE_MS);
+  }, []);
 
   // Beim Wechsel der Seite: alle Striche und Zeichenzustand zurücksetzen
   const prevIndexRef = useRef(currentIndex);
@@ -68,19 +85,21 @@ export default function LaserPointerOverlay() {
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       updatePointer(e.clientX, e.clientY, true);
+      scheduleGlowHide();
       if (isDrawing) {
         setCurrentLine((prev) => [...prev, { x: e.clientX, y: e.clientY }]);
       }
     },
-    [isDrawing, updatePointer]
+    [isDrawing, updatePointer, scheduleGlowHide]
   );
 
   const handleMouseDown = useCallback((e: MouseEvent) => {
     if (e.button !== 0) return;
+    scheduleGlowHide();
     setCurrentLine([{ x: e.clientX, y: e.clientY }]);
     setIsDrawing(true);
     document.body.style.userSelect = "none";
-  }, []);
+  }, [scheduleGlowHide]);
 
   const handleMouseUp = useCallback(
     (e: MouseEvent) => {
@@ -136,10 +155,11 @@ export default function LaserPointerOverlay() {
       lastTouchRef.current = { x, y };
       touchGestureRef.current = "none";
       updatePointer(x, y, true);
+      scheduleGlowHide();
       setCurrentLine([{ x, y }]);
       setIsDrawing(false);
     },
-    [updatePointer]
+    [updatePointer, scheduleGlowHide]
   );
 
   const handleTouchMove = useCallback(
@@ -150,6 +170,7 @@ export default function LaserPointerOverlay() {
       const y = t.clientY;
       lastTouchRef.current = { x, y };
       updatePointer(x, y, true);
+      scheduleGlowHide();
       const start = touchStartRef.current;
       const gesture = touchGestureRef.current;
       if (start && gesture === "none") {
@@ -175,7 +196,7 @@ export default function LaserPointerOverlay() {
       }
       /* gesture === "swipe": nichts tun, Scroll läuft durch */
     },
-    [updatePointer]
+    [updatePointer, scheduleGlowHide]
   );
 
   const handleTouchEnd = useCallback(
