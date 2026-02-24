@@ -18,12 +18,14 @@ export default function Contact() {
           <p id="contact-heading" className="text-2xl sm:text-3xl md:text-4xl text-accent font-light max-w-3xl mx-auto leading-relaxed">
             {t.contact.closingBefore}
             <span
-            className="text-magenta font-semibold text-3xl sm:text-4xl md:text-5xl opacity-0 animate-word-reveal inline-block"
-            style={{ animationDelay: "1.2s", animationFillMode: "forwards" }}
-          >
-            {t.contact.highlightWord}
-          </span>
-            {t.contact.closingAfter}
+              className="text-magenta font-semibold text-3xl sm:text-4xl md:text-5xl opacity-0 animate-word-reveal inline-block"
+              style={{ animationDelay: "1.2s", animationFillMode: "forwards" }}
+            >
+              {t.contact.highlightWord}
+            </span>
+            <span className="text-magenta font-semibold text-3xl sm:text-4xl md:text-5xl opacity-0 animate-word-reveal inline-block" style={{ animationDelay: "1.2s", animationFillMode: "forwards" }}>
+              {t.contact.closingAfter}
+            </span>
           </p>
         </ScrollReveal>
       </div>

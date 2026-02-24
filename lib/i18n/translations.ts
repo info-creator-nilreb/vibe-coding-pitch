@@ -251,9 +251,9 @@ const de = {
   },
   contact: {
     closing:
-      "Vibe Coding ersetzt keine Entwickler. Es ersetzt Wartezeit.",
-    closingBefore: "Vibe Coding ersetzt keine Entwickler. Es ersetzt ",
-    highlightWord: "Wartezeit",
+      "AI Coding ersetzt keine Entwickler. Es zwingt uns, Projekte neu zu denken.",
+    closingBefore: "AI Coding ersetzt keine Entwickler. Es zwingt uns, ",
+    highlightWord: "Projekte neu zu denken",
     closingAfter: ".",
   },
   editorial: {
@@ -376,10 +376,10 @@ const hu = {
   },
   contact: {
     closing:
-      "A Vibe Coding nem helyettesíti a fejlesztőket. A várakozási időt helyettesíti.",
-    closingBefore: "A Vibe Coding nem helyettesíti a fejlesztőket. A ",
-    highlightWord: "várakozási időt",
-    closingAfter: " helyettesíti.",
+      "Az AI Coding nem helyettesíti a fejlesztőket. Arra kényszerít, hogy a projekteket újragondoljuk.",
+    closingBefore: "Az AI Coding nem helyettesíti a fejlesztőket. Arra kényszerít, hogy ",
+    highlightWord: "a projekteket újragondoljuk",
+    closingAfter: ".",
   },
   editorial: {
     altHero: "Szerkesztőségi kép: Az ötlettől az eredményig — tiszta vonalak, fókusz.",
